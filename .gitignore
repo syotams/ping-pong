@@ -1,0 +1,6 @@
+build
+_deps
+CMakeFiles
+*.cmake
+CMakeCache.txt
+compile_commands.json
