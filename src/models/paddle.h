@@ -2,30 +2,28 @@
 #define PADDLE_HEADER
 
 #include "raylib.h"
-
-const int PADDLE_WIDTH = 10;
-const int PADDLE_HEIGHT = 80;
+#include "game_constans.h"
 
 typedef struct
 {
-    Vector2 position;
+    Rectangle box;
     int speed;
 } Paddle;
 
 void paddle_drawer(Paddle *player)
 {
-    DrawRectangle(player->position.x, player->position.y, PADDLE_WIDTH, PADDLE_HEIGHT, BLACK);
+    DrawRectangleRounded(player->box, 0.8, 0, WHITE);
 }
 
 void paddle_limit_movement(Paddle *paddle)
 {
-    if (paddle->position.y < 0)
+    if (paddle->box.y < 0)
     {
-        paddle->position.y = 0;
+        paddle->box.y = 0;
     }
-    if (paddle->position.y + PADDLE_HEIGHT > GetScreenHeight())
+    if (paddle->box.y + PADDLE_HEIGHT > PONG_SCREEN_HEIGHT)
     {
-        paddle->position.y = GetScreenHeight() - PADDLE_HEIGHT;
+        paddle->box.y = PONG_SCREEN_HEIGHT - PADDLE_HEIGHT;
     }
 }
 
@@ -33,14 +31,20 @@ void paddle_update(Paddle *player)
 {
     if (IsKeyDown(KEY_UP))
     {
-        player->position.y -= player->speed;
+        player->box.y -= player->speed;
     }
     else if (IsKeyDown(KEY_DOWN))
     {
-        player->position.y += player->speed;
+        player->box.y += player->speed;
     }
 
     paddle_limit_movement(player);
+}
+
+Paddle paddle_create(int x, int y, int speed)
+{
+    Paddle paddle = {.box = {x, y, PADDLE_WIDTH, PADDLE_HEIGHT}, .speed = speed};
+    return paddle;
 }
 
 #endif

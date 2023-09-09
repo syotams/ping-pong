@@ -23,6 +23,7 @@
 #include "models/cpu_paddle.h"
 #include "models/ball.h"
 #include "models/game_logic.h"
+#include "models/game_constans.h"
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -31,17 +32,13 @@
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
-Camera camera = {0};
-Vector3 cubePosition = {0};
-
-//------- Custom code by Yotam --------
-
-//------- End of custom code by Yotam --------
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
 static void UpdateDrawFrame(Paddle *player, Ball *ball, Paddle *cpu_player); // Update and draw one frame
+
+bool Paused = false;
 
 //----------------------------------------------------------------------------------
 // Main entry point
@@ -50,22 +47,13 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
-    const int screenPadding = 10;
 
-    InitWindow(screenWidth, screenHeight, "raylib");
+    InitWindow(PONG_SCREEN_WIDTH, PONG_SCREEN_HEIGHT, "Ping Pong");
 
-    camera.position = (Vector3){10.0f, 10.0f, 8.0f};
-    camera.target = (Vector3){0.0f, 0.0f, 0.0f};
-    camera.up = (Vector3){0.0f, 1.0f, 0.0f};
-    camera.fovy = 60.0f;
-    camera.projection = CAMERA_PERSPECTIVE;
-
-    Paddle player = {.position = {0, screenHeight / 2 - PADDLE_HEIGHT / 2}, .speed = 5};
-    Paddle cpu_player =
-        {.position = {screenWidth - PADDLE_WIDTH, screenHeight / 2 - PADDLE_HEIGHT / 2}, .speed = 5};
-    Ball ball = {.position = {screenHeight / 2, screenWidth / 2}, .speed = {6, 6}, 10};
+    // {.box = {0, PONG_SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2,}, .speed = 5}
+    Paddle player = paddle_create(0, PONG_SCREEN_HEIGHT / 2 - PADDLE_HEIGHT, 5);
+    Paddle cpu_player = paddle_create(PONG_SCREEN_WIDTH - PADDLE_WIDTH, PONG_SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2, 5);
+    Ball ball = ball_create(PONG_SCREEN_HEIGHT / 2, PONG_SCREEN_WIDTH / 2, 6, 6);
 
     //--------------------------------------------------------------------------------------
 
@@ -77,6 +65,10 @@ int main()
     // Main game loop
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
+        if (IsKeyPressed(KEY_SPACE))
+        {
+            Paused = !Paused;
+        }
         UpdateDrawFrame(&player, &ball, &cpu_player);
     }
 #endif
@@ -94,25 +86,31 @@ static void UpdateDrawFrame(Paddle *player, Ball *ball, Paddle *cpu_player)
 {
     // Update
     //----------------------------------------------------------------------------------
-    UpdateCamera(&camera, CAMERA_ORBITAL);
-    //----------------------------------------------------------------------------------
-    paddle_update(player);
-    cpu_paddle_update(cpu_player, ball);
-    ball_update(ball);
+    if (!Paused)
+    {
+        paddle_update(player);
+        cpu_paddle_update(cpu_player, ball);
+        ball_update(ball);
 
-    detect_collision(ball, player);
-    detect_collision(ball, cpu_player);
+        detect_collision(ball, player);
+        detect_collision(ball, cpu_player);
+        update_score(ball);
+    }
 
     // Draw
     //----------------------------------------------------------------------------------
     BeginDrawing();
 
-    ClearBackground(RAYWHITE);
-
+    game_engine_draw();
     paddle_drawer(player);
     paddle_drawer(cpu_player);
     ball_drawer(ball);
+    game_engine_draw_score();
 
+    if (Paused)
+    {
+        DrawText("Paused", PONG_SCREEN_WIDTH / 2 - 72, PONG_SCREEN_HEIGHT / 2 - 20, 40, Green);
+    }
     // DrawFPS(10, 10);
 
     EndDrawing();

@@ -6,13 +6,13 @@
 
 void cpu_paddle_update(Paddle *player, Ball *ball)
 {
-    if (player->position.y + PADDLE_HEIGHT / 2 > ball->position.y)
+    if (player->box.y + PADDLE_HEIGHT / 2 > ball->position.y)
     {
-        player->position.y -= player->speed;
+        player->box.y -= player->speed;
     }
-    else if (player->position.y + PADDLE_HEIGHT / 2 <= ball->position.y)
+    else if (player->box.y + PADDLE_HEIGHT / 2 <= ball->position.y)
     {
-        player->position.y += player->speed;
+        player->box.y += player->speed;
     }
     paddle_limit_movement(player);
 }
