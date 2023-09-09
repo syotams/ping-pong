@@ -18,8 +18,11 @@
  *   Copyright (c) 2013-2023 Ramon Santamaria (@raysan5)
  *
  ********************************************************************************************/
-
 #include "raylib.h"
+#include "models/paddle.h"
+#include "models/cpu_paddle.h"
+#include "models/ball.h"
+#include "models/game_logic.h"
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -31,10 +34,14 @@
 Camera camera = {0};
 Vector3 cubePosition = {0};
 
+//------- Custom code by Yotam --------
+
+//------- End of custom code by Yotam --------
+
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
-static void UpdateDrawFrame(void); // Update and draw one frame
+static void UpdateDrawFrame(Paddle *player, Ball *ball, Paddle *cpu_player); // Update and draw one frame
 
 //----------------------------------------------------------------------------------
 // Main entry point
@@ -45,6 +52,7 @@ int main()
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
+    const int screenPadding = 10;
 
     InitWindow(screenWidth, screenHeight, "raylib");
 
@@ -53,6 +61,11 @@ int main()
     camera.up = (Vector3){0.0f, 1.0f, 0.0f};
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
+
+    Paddle player = {.position = {0, screenHeight / 2 - PADDLE_HEIGHT / 2}, .speed = 5};
+    Paddle cpu_player =
+        {.position = {screenWidth - PADDLE_WIDTH, screenHeight / 2 - PADDLE_HEIGHT / 2}, .speed = 5};
+    Ball ball = {.position = {screenHeight / 2, screenWidth / 2}, .speed = {6, 6}, 10};
 
     //--------------------------------------------------------------------------------------
 
@@ -64,7 +77,7 @@ int main()
     // Main game loop
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
-        UpdateDrawFrame();
+        UpdateDrawFrame(&player, &ball, &cpu_player);
     }
 #endif
 
@@ -77,12 +90,18 @@ int main()
 }
 
 // Update and draw game frame
-static void UpdateDrawFrame(void)
+static void UpdateDrawFrame(Paddle *player, Ball *ball, Paddle *cpu_player)
 {
     // Update
     //----------------------------------------------------------------------------------
     UpdateCamera(&camera, CAMERA_ORBITAL);
     //----------------------------------------------------------------------------------
+    paddle_update(player);
+    cpu_paddle_update(cpu_player, ball);
+    ball_update(ball);
+
+    detect_collision(ball, player);
+    detect_collision(ball, cpu_player);
 
     // Draw
     //----------------------------------------------------------------------------------
@@ -90,9 +109,11 @@ static void UpdateDrawFrame(void)
 
     ClearBackground(RAYWHITE);
 
-    DrawCircle(400, 300, 10, GRAY);
+    paddle_drawer(player);
+    paddle_drawer(cpu_player);
+    ball_drawer(ball);
 
-    DrawFPS(10, 10);
+    // DrawFPS(10, 10);
 
     EndDrawing();
     //----------------------------------------------------------------------------------
