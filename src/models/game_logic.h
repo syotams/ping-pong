@@ -14,7 +14,7 @@ typedef struct
 
 GameLogic game_logic = {0, 0};
 
-void detect_collision(Ball *ball, Paddle *player)
+void game_engine_detect_collision(Ball *ball, Paddle *player)
 {
     if (CheckCollisionCircleRec(ball->position, ball->radius, player->box))
     {
@@ -22,7 +22,7 @@ void detect_collision(Ball *ball, Paddle *player)
     }
 }
 
-void update_score(Ball *ball)
+void game_engine_update_score(Ball *ball)
 {
     if (ball->position.x <= ball->radius)
     {
@@ -44,9 +44,9 @@ void game_engine_draw_score()
 
 void game_engine_draw()
 {
-    ClearBackground(Dark_Green);
-    DrawRectangle(0, 0, PONG_SCREEN_WIDTH / 2, PONG_SCREEN_HEIGHT, Green);
-    DrawCircle(PONG_SCREEN_WIDTH / 2, PONG_SCREEN_HEIGHT / 2, 75, Light_Green);
+    ClearBackground(PONG_DARK_GREEN);
+    DrawRectangle(0, 0, PONG_SCREEN_WIDTH / 2, PONG_SCREEN_HEIGHT, PONG_GREEN);
+    DrawCircle(PONG_SCREEN_WIDTH / 2, PONG_SCREEN_HEIGHT / 2, 75, PONG_LIGHT_GREEN);
     DrawLine(PONG_SCREEN_WIDTH / 2, 0, PONG_SCREEN_WIDTH / 2, PONG_SCREEN_HEIGHT, WHITE);
 }
 

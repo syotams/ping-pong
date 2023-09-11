@@ -23,7 +23,6 @@
 #include "models/cpu_paddle.h"
 #include "models/ball.h"
 #include "models/game_logic.h"
-#include "models/game_constans.h"
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -92,9 +91,9 @@ static void UpdateDrawFrame(Paddle *player, Ball *ball, Paddle *cpu_player)
         cpu_paddle_update(cpu_player, ball);
         ball_update(ball);
 
-        detect_collision(ball, player);
-        detect_collision(ball, cpu_player);
-        update_score(ball);
+        game_engine_detect_collision(ball, player);
+        game_engine_detect_collision(ball, cpu_player);
+        game_engine_update_score(ball);
     }
 
     // Draw
@@ -109,7 +108,7 @@ static void UpdateDrawFrame(Paddle *player, Ball *ball, Paddle *cpu_player)
 
     if (Paused)
     {
-        DrawText("Paused", PONG_SCREEN_WIDTH / 2 - 72, PONG_SCREEN_HEIGHT / 2 - 20, 40, Green);
+        DrawText("Paused", PONG_SCREEN_WIDTH / 2 - 72, PONG_SCREEN_HEIGHT / 2 - 20, 40, PONG_GREEN);
     }
     // DrawFPS(10, 10);
 

@@ -3,15 +3,19 @@
 
 #include "raylib.h"
 
-const Color Green = {38, 185, 154, 255};
-const Color Dark_Green = {20, 160, 133, 255};
-const Color Light_Green = {129, 204, 184, 255};
-const Color Yellow = {243, 213, 91, 255};
+#define PONG_GREEN \
+    CLITERAL(Color) { 38, 185, 154, 255 }
+#define PONG_DARK_GREEN \
+    CLITERAL(Color) { 20, 160, 133, 255 }
+#define PONG_LIGHT_GREEN \
+    CLITERAL(Color) { 129, 204, 184, 255 }
+#define PONG_YELLOW \
+    CLITERAL(Color) { 243, 213, 91, 255 }
 
-const int PADDLE_WIDTH = 18;
-const int PADDLE_HEIGHT = 80;
+#define PADDLE_WIDTH (int)18
+#define PADDLE_HEIGHT (int)80
 
-const int PONG_SCREEN_WIDTH = 800;
-const int PONG_SCREEN_HEIGHT = 450;
+#define PONG_SCREEN_WIDTH (int)800
+#define PONG_SCREEN_HEIGHT (int)450
 
 #endif

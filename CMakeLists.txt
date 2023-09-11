@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11) # FetchContent is available in 3.11+
-project(example)
+project(ping-pong)
 
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -25,7 +25,12 @@ endif()
 
 # Our Project
 
-add_executable(${PROJECT_NAME} src/main.c)
+add_executable(${PROJECT_NAME} 
+  src/main.c 
+  src/models/ball.c 
+  src/models/paddle.c
+  src/models/cpu_paddle.c
+)
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 
